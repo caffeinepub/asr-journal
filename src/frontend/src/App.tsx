@@ -9,6 +9,8 @@ import IntegrationAftercarePage from "./components/IntegrationAftercarePage";
 import JourneyCovenantPage from "./components/JourneyCovenantPage";
 import JourneyMapPage from "./components/JourneyMapPage";
 import Sidebar from "./components/Sidebar";
+import ThresholdSpacePage from "./components/ThresholdSpacePage";
+import WeekReflectionPage from "./components/WeekReflectionPage";
 import WeeklyOverview from "./components/WeeklyOverview";
 import WelcomePage from "./components/WelcomePage";
 import { Toaster } from "./components/ui/sonner";
@@ -17,8 +19,10 @@ import { useInternetIdentity } from "./hooks/useInternetIdentity";
 import { useJournalContent } from "./hooks/useJournalContent";
 
 export type View =
+  | { type: "threshold" }
   | { type: "day"; day: number }
   | { type: "week"; week: number }
+  | { type: "week-reflection"; week: number }
   | { type: "checkin"; milestone: 30 | 60 | 90 }
   | { type: "covenant" }
   | { type: "community" }
@@ -32,7 +36,7 @@ export default function App() {
   const { identity, login } = useInternetIdentity();
   const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
   const { actor } = useActor();
-  const [view, setView] = useState<View>({ type: "day", day: 1 });
+  const [view, setView] = useState<View>({ type: "threshold" });
   const [completedDays, setCompletedDays] = useState<number[]>([]);
   const [showCovenant, setShowCovenant] = useState(false);
 
@@ -102,12 +106,20 @@ export default function App() {
         weeks={weeks}
       />
       <main className="flex-1 overflow-y-auto">
+        {view.type === "threshold" && <ThresholdSpacePage setView={setView} />}
         {view.type === "week" && (
           <WeeklyOverview
             weekNum={view.week}
             setView={setView}
             completedDays={completedDays}
             weeks={weeks}
+          />
+        )}
+        {view.type === "week-reflection" && (
+          <WeekReflectionPage
+            weekNum={view.week}
+            weeks={weeks}
+            setView={setView}
           />
         )}
         {view.type === "day" && (
@@ -119,6 +131,11 @@ export default function App() {
           />
         )}
         {view.type === "checkin" && <CheckInPage milestone={view.milestone} />}
+        {view.type === "covenant" && (
+          <JourneyCovenantPage
+            onReceive={() => setView({ type: "threshold" })}
+          />
+        )}
         {view.type === "community" && <CommunityWitnessPage />}
         {view.type === "archive" && (
           <ArchivePage setView={setView} completedDays={completedDays} />
