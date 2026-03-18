@@ -90,7 +90,7 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* Gentle presence note — no progress bar pressure */}
+      {/* Gentle presence note */}
       <div className="px-5 py-3 border-b border-sidebar-border">
         <p className="text-xs text-muted-foreground/60 italic">
           {visitedCount} {visitedCount === 1 ? "day" : "days"} visited
@@ -223,6 +223,18 @@ export default function Sidebar({
       <div className="px-3 py-3 border-t border-sidebar-border/50 space-y-1">
         <button
           type="button"
+          onClick={() => setView({ type: "journey-map" })}
+          data-ocid="sidebar.journey_map.link"
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+            view.type === "journey-map"
+              ? "bg-amber-100 text-amber-900 font-medium"
+              : "text-foreground/60 hover:bg-muted hover:text-foreground"
+          }`}
+        >
+          <span aria-hidden="true">🗺️</span>Journey Map
+        </button>
+        <button
+          type="button"
           onClick={() => setView({ type: "guidance" })}
           data-ocid="sidebar.guidance.link"
           className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
@@ -257,6 +269,18 @@ export default function Sidebar({
         >
           <span aria-hidden="true">🌀</span>Return &amp; Revisit
         </button>
+        <button
+          type="button"
+          onClick={() => setView({ type: "aftercare" })}
+          data-ocid="sidebar.aftercare.link"
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+            view.type === "aftercare"
+              ? "bg-amber-100 text-amber-900 font-medium"
+              : "text-foreground/60 hover:bg-muted hover:text-foreground"
+          }`}
+        >
+          <span aria-hidden="true">🌱</span>Integration &amp; Aftercare
+        </button>
         <div>
           <button
             type="button"
@@ -268,7 +292,7 @@ export default function Sidebar({
                 : "text-foreground/60 hover:bg-muted hover:text-foreground"
             }`}
           >
-            <span aria-hidden="true">🔮</span>Soul Reflection
+            <span aria-hidden="true">🔮</span>Identity Tracking
           </button>
           <p className="text-xs italic text-muted-foreground/40 pl-9 -mt-0.5 pb-1">
             optional

@@ -37,7 +37,7 @@ export default function WelcomePage({ onLogin }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="space-y-2 mb-10"
+            className="space-y-2 mb-6"
           >
             <p className="text-base text-foreground/75 leading-relaxed">
               Welcome. This is your sacred space for noticing your authentic
@@ -48,6 +48,17 @@ export default function WelcomePage({ onLogin }: Props) {
             </p>
             <p className="text-sm text-foreground/55 leading-relaxed italic">
               There is no right way, and no pressure to finish anything.
+            </p>
+
+            {/* Verbatim Welcome paragraph from Segment 1 */}
+            <p className="text-sm text-foreground/65 leading-relaxed mt-4">
+              The ASR Journal is a 90-day guided experience blending art
+              therapy, spiritual awareness, and reflective writing to support
+              emotional healing, personal growth, and creative awakening. This
+              journal is designed to help you build a daily habit of creativity
+              and mindfulness through structured, meaningful prompts. You will
+              move through 13 weekly themes, each deepening a different layer of
+              awareness, transformation, and embodiment.
             </p>
           </motion.div>
 
@@ -132,22 +143,22 @@ export default function WelcomePage({ onLogin }: Props) {
           What this space holds
         </p>
         <h2 className="text-3xl text-amber-900 mb-3 font-light">
-          Art Therapy, Spirituality &amp; Reflective Writing
+          Art Therapy, Spirituality &amp; Writing
         </h2>
         <div className="w-10 h-px bg-amber-400 mb-6" />
         <div className="grid md:grid-cols-3 gap-6">
           {[
             {
               title: "Art Therapy",
-              desc: "Expression through color, line, and symbol — unlocking what lives beneath thought, without judgment or skill required.",
+              desc: "Art Therapy lets you express feelings through drawing, painting, or coloring, unlocking intuition and emotional release.",
             },
             {
               title: "Spirituality",
-              desc: "A quiet invitation toward inner peace, purpose, and the deeper current of meaning that runs through your days.",
+              desc: "Spirituality connects you to something greater—inner peace, purpose, or universal energy—bringing grounding and meaning.",
             },
             {
-              title: "Reflective Writing",
-              desc: "Words as a bridge between feeling and understanding — a soft space to meet yourself honestly and with compassion.",
+              title: "Writing",
+              desc: "Writing helps you articulate thoughts, process experiences, and clarify emotions, blending reflection with intuition.",
             },
           ].map((item) => (
             <div
@@ -160,6 +171,33 @@ export default function WelcomePage({ onLogin }: Props) {
               </p>
             </div>
           ))}
+        </div>
+
+        {/* How to Use This Journal — verbatim from Segment 1 */}
+        <div className="mt-10 bg-amber-50/60 border border-amber-200/60 rounded-2xl p-7">
+          <h3 className="text-base text-amber-800 mb-4 font-medium tracking-wide">
+            How to Use This Journal
+          </h3>
+          <ul className="space-y-2">
+            {[
+              "Daily — Reflect on the guided daily spiritual focus.",
+              "Respond visually, symbolically, or abstractly in the art box.",
+              "Journal freely using the writing prompt.",
+              "End with one meaningful note of gratitude.",
+              "Weekly theme, intentions, and bonus reflection questions.",
+              "Every 30 days, complete a reflective spread — designed to capture insights, resistance, or inner shifts.",
+              "Spend as much or as little time with each as you need.",
+              "The practice is sacred simply because you showed up.",
+            ].map((item) => (
+              <li
+                key={item}
+                className="flex gap-3 items-start text-sm text-foreground/65 leading-relaxed"
+              >
+                <span className="text-amber-500 mt-0.5 shrink-0">✦</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

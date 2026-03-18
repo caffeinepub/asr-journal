@@ -5,7 +5,9 @@ import CommunityWitnessPage from "./components/CommunityWitnessPage";
 import DailyPage from "./components/DailyPage";
 import GuidanceLibraryPage from "./components/GuidanceLibraryPage";
 import IdentityTrackingPage from "./components/IdentityTrackingPage";
+import IntegrationAftercarePage from "./components/IntegrationAftercarePage";
 import JourneyCovenantPage from "./components/JourneyCovenantPage";
+import JourneyMapPage from "./components/JourneyMapPage";
 import Sidebar from "./components/Sidebar";
 import WeeklyOverview from "./components/WeeklyOverview";
 import WelcomePage from "./components/WelcomePage";
@@ -22,7 +24,9 @@ export type View =
   | { type: "community" }
   | { type: "archive" }
   | { type: "guidance" }
-  | { type: "identity" };
+  | { type: "identity" }
+  | { type: "journey-map" }
+  | { type: "aftercare" };
 
 export default function App() {
   const { identity, login } = useInternetIdentity();
@@ -120,7 +124,9 @@ export default function App() {
           <ArchivePage setView={setView} completedDays={completedDays} />
         )}
         {view.type === "guidance" && <GuidanceLibraryPage />}
-        {view.type === "identity" && <IdentityTrackingPage />}
+        {view.type === "identity" && <IdentityTrackingPage setView={setView} />}
+        {view.type === "journey-map" && <JourneyMapPage setView={setView} />}
+        {view.type === "aftercare" && <IntegrationAftercarePage />}
       </main>
       <Toaster richColors position="top-right" />
     </div>

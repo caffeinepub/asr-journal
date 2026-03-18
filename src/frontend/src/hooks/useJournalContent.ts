@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { backendInterface } from "../backend.d";
+import { WEEKS } from "../journalData";
 
 export interface NDayData {
   art: string;
@@ -41,6 +42,24 @@ function normalizeWeek(w: {
   };
 }
 
+function localWeeksToNWeeks(): NWeekData[] {
+  return WEEKS.map((w) => ({
+    week: w.week,
+    theme: w.theme,
+    intention: w.intention,
+    quote: w.quote,
+    mandalaHint: w.mandalaHint,
+    reflectionQuestions: w.reflectionQuestions,
+    days: w.days.map((d) => ({
+      day: d.day,
+      art: d.art,
+      writing: d.writing,
+      spiritual: d.spiritual,
+      gratitude: d.gratitude,
+    })),
+  }));
+}
+
 export function getDayDataFromWeeks(
   weeks: NWeekData[],
   dayNum: number,
@@ -57,14 +76,27 @@ export function useJournalContent(actor: backendInterface | null) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!actor) return;
+    if (!actor) {
+      // No actor available — use local data immediately
+      setWeeks(localWeeksToNWeeks());
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     actor
       .getWeeks()
       .then((raw) => {
-        setWeeks(raw.map(normalizeWeek));
+        if (raw.length === 0) {
+          // Backend returned empty — fall back to local data
+          setWeeks(localWeeksToNWeeks());
+        } else {
+          setWeeks(raw.map(normalizeWeek));
+        }
       })
-      .catch(() => {})
+      .catch(() => {
+        // On error, fall back to local data
+        setWeeks(localWeeksToNWeeks());
+      })
       .finally(() => setLoading(false));
   }, [actor]);
 

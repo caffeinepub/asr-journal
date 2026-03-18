@@ -5,7 +5,33 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+const dailyStructureItems = [
+  {
+    title: "Spiritual Prompt",
+    body: "A reflective question that helps you explore your inner world, intuition, values, or emotions.",
+  },
+  {
+    title: "Art Prompt",
+    body: "A non-verbal expression practice using shapes, color, or imagery. No skill required — just exploration.",
+  },
+  {
+    title: "Writing Prompt",
+    body: "A grounding exercise for clarity and emotional integration.",
+  },
+  {
+    title: "Gratitude Anchor",
+    body: "A closing moment to return to appreciation and presence.",
+  },
+];
+
 const sections = [
+  {
+    id: "daily-structure",
+    icon: "📋",
+    title: "Daily Practice Guide",
+    subtitle: "How to use this journal — from Segment 1",
+    isDailyStructure: true,
+  },
   {
     id: "lessons",
     icon: "🕯️",
@@ -124,24 +150,59 @@ export default function GuidanceLibraryPage() {
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-5">
-              <p className="text-xs italic text-muted-foreground/50 mb-4">
-                All items are optional. Skip what doesn't resonate.
-              </p>
-              <div className="space-y-4">
-                {section.items.map((item) => (
-                  <div
-                    key={item.title}
-                    className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/60"
-                  >
-                    <p className="text-sm font-medium text-amber-800 mb-1.5">
-                      {item.title}
-                    </p>
-                    <p className="text-sm text-foreground/65 leading-relaxed">
-                      {item.body}
-                    </p>
+              {section.isDailyStructure ? (
+                <div>
+                  <p className="text-sm text-foreground/65 leading-relaxed mb-5">
+                    Daily — Reflect on the guided daily spiritual focus. Respond
+                    visually, symbolically, or abstractly in the art box.
+                    Journal freely using the writing prompt. End with one
+                    meaningful note of gratitude.
+                  </p>
+                  <div className="space-y-4 mb-5">
+                    {dailyStructureItems.map((item) => (
+                      <div
+                        key={item.title}
+                        className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/60"
+                      >
+                        <p className="text-sm font-medium text-amber-800 mb-1.5">
+                          {item.title}
+                        </p>
+                        <p className="text-sm text-foreground/65 leading-relaxed">
+                          {item.body}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <p className="text-sm italic text-amber-800/60 leading-relaxed">
+                    Weekly theme, intentions, and bonus reflection questions
+                    accompany each week. Every 30 days, a reflective spread
+                    captures insights, resistance, or inner shifts. Spend as
+                    much or as little time with each as you need. The practice
+                    is sacred simply because you showed up.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-xs italic text-muted-foreground/50 mb-4">
+                    All items are optional. Skip what doesn&apos;t resonate.
+                  </p>
+                  <div className="space-y-4">
+                    {section.items?.map((item) => (
+                      <div
+                        key={item.title}
+                        className="bg-amber-50/50 rounded-xl p-4 border border-amber-100/60"
+                      >
+                        <p className="text-sm font-medium text-amber-800 mb-1.5">
+                          {item.title}
+                        </p>
+                        <p className="text-sm text-foreground/65 leading-relaxed">
+                          {item.body}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
         ))}

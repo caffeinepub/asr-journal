@@ -1,5 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import type { View } from "../App";
+
+interface Props {
+  setView: (v: View) => void;
+}
 
 const soulPrompts = [
   { id: "remembering", label: "Who am I remembering today?" },
@@ -18,8 +23,9 @@ const reflectionSeeds = [
   "Gentleness is the path, not just the destination.",
 ];
 
-export default function IdentityTrackingPage() {
+export default function IdentityTrackingPage({ setView }: Props) {
   const [responses, setResponses] = useState<Record<string, string>>({});
+  const [selfTrackingNotes, setSelfTrackingNotes] = useState("");
   const [saved, setSaved] = useState(false);
 
   const handleHold = () => {
@@ -34,9 +40,11 @@ export default function IdentityTrackingPage() {
     <div className="max-w-2xl mx-auto px-6 py-10 pb-20">
       <div className="mb-8">
         <p className="text-xs tracking-widest uppercase text-amber-600 mb-2">
-          Optional · Soul Reflection
+          Optional · Identity Tracking
         </p>
-        <h2 className="text-4xl text-amber-900 font-light">Soul Reflection</h2>
+        <h2 className="text-4xl text-amber-900 font-light">
+          Identity Tracking
+        </h2>
         <p className="text-base text-foreground/60 mt-3 leading-relaxed italic">
           Observe shifts in your authentic self. There is no grading, only
           noticing.
@@ -49,6 +57,43 @@ export default function IdentityTrackingPage() {
           This space is entirely optional. It exists for your own noticing, not
           for measurement. Nothing here will be evaluated, scored, or compared.
         </p>
+      </div>
+
+      {/* Segment 5 — Reflective Milestones quick access */}
+      <div className="bg-purple-50/40 border border-purple-100/60 rounded-2xl p-5 mb-10">
+        <p className="text-sm font-medium text-purple-800 mb-1">
+          Segment 5 — Reflective Milestones
+        </p>
+        <p className="text-xs italic text-purple-700/60 mb-4">
+          Your 30, 60, and 90-day reflections are mapped here. Access them
+          anytime.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setView({ type: "checkin", milestone: 30 })}
+            data-ocid="identity.checkin_30.button"
+            className="px-4 py-2 rounded-full border border-purple-300/60 text-purple-800 text-xs hover:bg-purple-100/50 transition-colors"
+          >
+            30-Day Reflection
+          </button>
+          <button
+            type="button"
+            onClick={() => setView({ type: "checkin", milestone: 60 })}
+            data-ocid="identity.checkin_60.button"
+            className="px-4 py-2 rounded-full border border-purple-300/60 text-purple-800 text-xs hover:bg-purple-100/50 transition-colors"
+          >
+            60-Day Reflection
+          </button>
+          <button
+            type="button"
+            onClick={() => setView({ type: "checkin", milestone: 90 })}
+            data-ocid="identity.checkin_90.button"
+            className="px-4 py-2 rounded-full border border-purple-300/60 text-purple-800 text-xs hover:bg-purple-100/50 transition-colors"
+          >
+            90-Day Reflection
+          </button>
+        </div>
       </div>
 
       {/* Soul reminder prompts */}
@@ -95,7 +140,7 @@ export default function IdentityTrackingPage() {
       </div>
 
       {/* Reflection Seeds */}
-      <div className="space-y-4">
+      <div className="space-y-4 mb-14">
         <p className="text-xs uppercase tracking-widest text-amber-600 mb-1">
           Reflection Seeds
         </p>
@@ -115,6 +160,26 @@ export default function IdentityTrackingPage() {
           ))}
         </div>
       </div>
+
+      {/* Notes — Self-Tracking Space */}
+      <section aria-labelledby="self-tracking-notes-heading">
+        <h3
+          id="self-tracking-notes-heading"
+          className="text-xl text-amber-900 font-medium mb-2"
+        >
+          Notes — Self-Tracking Space
+        </h3>
+        <p className="text-sm italic text-muted-foreground/55 mb-4">
+          A place to notice patterns, shifts, and what&apos;s becoming clear.
+        </p>
+        <textarea
+          value={selfTrackingNotes}
+          onChange={(e) => setSelfTrackingNotes(e.target.value)}
+          placeholder="This space is for noticing, not measuring..."
+          data-ocid="identity.notes.textarea"
+          className="w-full min-h-[180px] p-5 rounded-2xl border border-border/60 bg-white/60 text-foreground placeholder:text-muted-foreground/40 resize-y focus:outline-none focus:ring-2 focus:ring-amber-300/50 text-sm leading-relaxed"
+        />
+      </section>
 
       <div className="mt-14 text-center">
         <p className="text-sm italic text-muted-foreground/40">

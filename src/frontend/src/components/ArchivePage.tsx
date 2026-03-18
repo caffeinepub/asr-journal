@@ -22,6 +22,17 @@ export default function ArchivePage({ setView, completedDays }: Props) {
         <div className="w-12 h-px bg-amber-400 mt-4" />
       </div>
 
+      {/* Segment 5 return language — care note card */}
+      <div className="bg-amber-50/50 border border-amber-100/70 rounded-2xl p-5 mb-8">
+        <p className="text-sm italic text-amber-800/75 leading-relaxed mb-2">
+          Your practice is cyclical and ongoing. Come back anytime — all
+          reflections, art, and prompts remain yours.
+        </p>
+        <p className="text-sm italic text-amber-800/60 leading-relaxed">
+          Each week is its own complete world. You may enter anywhere, anytime.
+        </p>
+      </div>
+
       <p className="text-sm italic text-muted-foreground/55 mb-8 leading-relaxed">
         Your journey is cyclical, not linear. Every return is a new beginning.
       </p>
@@ -71,10 +82,18 @@ export default function ArchivePage({ setView, completedDays }: Props) {
         })}
       </div>
 
-      <div className="mt-12 text-center">
+      <div className="mt-12 text-center space-y-4">
         <p className="text-sm italic text-muted-foreground/45">
           Each week is its own complete world. You may enter anywhere, anytime.
         </p>
+        <button
+          type="button"
+          onClick={() => setView({ type: "aftercare" })}
+          data-ocid="archive.aftercare.link"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-amber-400/50 text-amber-800 text-sm hover:bg-amber-50 transition-colors"
+        >
+          🌱 Visit Integration &amp; Aftercare →
+        </button>
       </div>
     </div>
   );

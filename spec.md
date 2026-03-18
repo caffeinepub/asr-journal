@@ -1,26 +1,35 @@
-# ASR Journal — Backend Content Storage
+# ASR Journal
 
 ## Current State
-All 90 days of journal content (prompts, themes, week data) live in `src/frontend/src/journalData.ts` as a large static TypeScript file. This causes build timeouts when the file grows too large.
+
+The app has: WelcomePage (Threshold Space), JourneyCovenantPage, WeeklyOverview, DailyPage, CheckInPage (30/60/90-day), GuidanceLibraryPage, CommunityWitnessPage, ArchivePage, IdentityTrackingPage (Soul Reflection).
+
+The Threshold Space and Journey Covenant were just updated to include verbatim Segment 1 text. The weekly/daily content (journalData.ts) already matches Segments 2–4 verbatim.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Motoko types: `DayData`, `WeekData` with all journal fields
-- Backend query: `getWeeks()` returns all 13 weeks with days embedded
-- Backend query: `getWeek(weekNumber: Nat)` returns a single week
-- Frontend hook `useJournalContent` that fetches week/day data from backend
+- `JourneyMapPage` component — Phased Inner Journey Map (hub container #3). Shows verbatim Segment 1 Table of Contents structure, all 13 weeks with themes as clickable links, and 30/60/90-day reflection milestones as integration points. New view type: `{ type: "journey-map" }`.
+- `IntegrationAftercarePage` component — Integration & Aftercare (hub container #8). Contains: Segment 5 Closing Ritual steps (verbatim), Notes pages (freeform areas for: My Favorite Prompts from This Journey, Symbols & Themes That Showed Up, Creative Ideas or Breakthroughs), Future Intentions prompts (verbatim from Segment 5: "What do you want to create next? What are you curious about? What spiritual practice do you want to deepen?"). New view type: `{ type: "aftercare" }`.
+- Sidebar links for Journey Map and Integration & Aftercare.
 
 ### Modify
-- `main.mo` — add journal content data store with all 90 days seeded at canister init
-- Frontend components (`WeeklyOverview`, `DailyPage`, `CheckInPage`) — replace direct imports of `journalData.ts` with backend fetch
-- `backend.d.ts` — add `WeekData`, `DayData` types and new query methods
+- `IdentityTrackingPage` — map explicitly to Segment 5. Add: quick-access buttons to the three 30/60/90-day reflections at the top, and a "Notes" freeform section below the existing prompts with Segment 5 "Notes pages for self-tracking" heading and open textarea. Keep existing soul reflection prompts.
+- `GuidanceLibraryPage` — add verbatim Segment 1 content as a "Daily Practice Guide" panel at the top of the accordion. Content: Daily Page Structure (Spiritual Prompt, Art Prompt, Writing Prompt, Gratitude Anchor) with verbatim descriptions from Segment 1.
+- `ArchivePage` — add Segment 5 language about returning: "Your practice is cyclical and ongoing. Come back anytime — all reflections, art, and prompts remain yours." Also add a link to Integration & Aftercare from the archive page footer.
+- `Sidebar` — add Journey Map and Integration & Aftercare links. Rename "Soul Reflection" to "Identity Tracking" with "(optional)" note.
+- `App.tsx` — add `journey-map` and `aftercare` view types.
 
 ### Remove
-- `journalData.ts` static data array (replaced by backend queries)
+- Nothing removed.
 
 ## Implementation Plan
-1. Extend `main.mo` with `DayData`/`WeekData` types and all 90 days seeded in a stable array, exposed via `getWeeks` and `getWeek` queries
-2. Regenerate `backend.d.ts` with new types
-3. Add `useJournalContent` React hook that calls `getWeeks()` once and caches
-4. Refactor all frontend components to use the hook instead of the static import
+
+1. Add `journey-map` and `aftercare` view types to `App.tsx`
+2. Create `JourneyMapPage.tsx` with Segment 1 TOC structure and week/milestone links
+3. Create `IntegrationAftercarePage.tsx` with Segment 5 closing ritual, notes pages, and future intentions
+4. Update `IdentityTrackingPage.tsx` to add 30/60/90 access buttons and notes section
+5. Update `GuidanceLibraryPage.tsx` to add Daily Practice Guide panel with verbatim Segment 1 daily structure
+6. Update `ArchivePage.tsx` with Segment 5 return language
+7. Update `Sidebar.tsx` with new nav links
+8. Validate and fix any errors

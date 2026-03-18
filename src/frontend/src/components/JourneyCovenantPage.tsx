@@ -90,7 +90,41 @@ export default function JourneyCovenantPage({ onReceive }: Props) {
               ))}
             </div>
 
-            <div className="border-t border-amber-200 pt-6 mt-6">
+            {/* Verbatim Segment 1: The Overlap of Art Therapy, Spirituality & Writing */}
+            <div className="border-t border-amber-200 pt-6 mt-6 bg-amber-50/40 rounded-xl px-5 py-5">
+              <h2 className="text-sm tracking-[0.2em] uppercase text-amber-700 mb-3 font-medium">
+                The Overlap of Art Therapy, Spirituality &amp; Writing
+              </h2>
+              <p className="text-sm italic text-amber-900/75 leading-relaxed mb-4">
+                Art, spirituality, and writing each offer ways to explore your
+                inner world, express emotions, and find meaning. Together, they
+                create a space for healing, insight, and growth.
+              </p>
+              <ul className="space-y-2 mb-4">
+                {[
+                  "Engage mind, body, and spirit",
+                  "Encourage self-reflection and insight",
+                  "Support emotional release and healing",
+                  "Foster connection to self, others, and the larger world",
+                  "Promote mindfulness, calm, and presence",
+                ].map((point) => (
+                  <li
+                    key={point}
+                    className="flex gap-3 items-start text-sm text-foreground/70 leading-relaxed"
+                  >
+                    <span className="text-amber-400 mt-0.5 shrink-0">✦</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm text-amber-800/70 leading-relaxed italic">
+                This integration guides personal growth, self-love, and creative
+                exploration, honoring your journey with intention and heart, by
+                giving you reminders of your authentic self.
+              </p>
+            </div>
+
+            <div className="border-t border-amber-200 pt-6 mt-2">
               <p className="text-sm text-center text-foreground/60 italic">
                 This is a sacred practice for remembering your authentic self.
                 You are already whole. This journal simply invites you to
