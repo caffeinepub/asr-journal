@@ -1,10 +1,13 @@
 import Map "mo:core/Map";
 import Set "mo:core/Set";
+import List "mo:core/List";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   // Authorization
   let accessControlState = AccessControl.initState();
@@ -26,13 +29,32 @@ actor {
     artCanvas : ArtCanvas;
   };
 
+  type DayData = {
+    day : Nat;
+    spiritual : Text;
+    art : Text;
+    writing : Text;
+    gratitude : Text;
+  };
+
+  type WeekData = {
+    week : Nat;
+    theme : Text;
+    intention : Text;
+    quote : Text;
+    mandalaHint : Text;
+    reflectionQuestions : [Text];
+    days : [DayData];
+  };
+
+  let weeks = List.empty<WeekData>();
+
   // Store user profiles
   let userProfiles = Map.empty<Principal, UserProfile>();
 
   // Store entries per user
   let userEntries = Map.empty<Principal, Map.Map<Nat, JournalEntry>>();
 
-  // User profile functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can view profiles");
@@ -54,7 +76,6 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Journal entry functions
   public shared ({ caller }) func saveJournalEntry(dayNumber : Nat, spiritualResponse : Text, writingResponse : Text, gratitudeAnchor : Text, artCanvas : ArtCanvas) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can save entries");
@@ -117,5 +138,13 @@ actor {
         daysSet.toArray();
       };
     };
+  };
+
+  public query ({ caller }) func getWeeks() : async [WeekData] {
+    weeks.toArray();
+  };
+
+  public query ({ caller }) func getWeek(weekNumber : Nat) : async ?WeekData {
+    weeks.find(func(week) { week.week == weekNumber });
   };
 };

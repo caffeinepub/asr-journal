@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { View } from "../App";
-import { WEEKS } from "../journalData";
+import type { NWeekData } from "../hooks/useJournalContent";
 import ArtCanvas from "./ArtCanvas";
 
 interface Props {
   weekNum: number;
   setView: (v: View) => void;
   completedDays: number[];
+  weeks: NWeekData[];
 }
 
 const integrationPrompts = [
@@ -31,8 +32,9 @@ export default function WeeklyOverview({
   weekNum,
   setView,
   completedDays,
+  weeks,
 }: Props) {
-  const week = WEEKS.find((w) => w.week === weekNum);
+  const week = weeks.find((w) => w.week === weekNum);
   const [integration, setIntegration] = useState<Record<string, string>>({});
 
   if (!week) return null;

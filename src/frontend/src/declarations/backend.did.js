@@ -22,6 +22,22 @@ export const JournalEntry = IDL.Record({
   'gratitudeAnchor' : IDL.Text,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const DayData = IDL.Record({
+  'art' : IDL.Text,
+  'day' : IDL.Nat,
+  'spiritual' : IDL.Text,
+  'gratitude' : IDL.Text,
+  'writing' : IDL.Text,
+});
+export const WeekData = IDL.Record({
+  'theme' : IDL.Text,
+  'reflectionQuestions' : IDL.Vec(IDL.Text),
+  'days' : IDL.Vec(DayData),
+  'week' : IDL.Nat,
+  'quote' : IDL.Text,
+  'mandalaHint' : IDL.Text,
+  'intention' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -36,6 +52,8 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getWeek' : IDL.Func([IDL.Nat], [IDL.Opt(WeekData)], ['query']),
+  'getWeeks' : IDL.Func([], [IDL.Vec(WeekData)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'saveJournalEntry' : IDL.Func(
@@ -62,6 +80,22 @@ export const idlFactory = ({ IDL }) => {
     'gratitudeAnchor' : IDL.Text,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const DayData = IDL.Record({
+    'art' : IDL.Text,
+    'day' : IDL.Nat,
+    'spiritual' : IDL.Text,
+    'gratitude' : IDL.Text,
+    'writing' : IDL.Text,
+  });
+  const WeekData = IDL.Record({
+    'theme' : IDL.Text,
+    'reflectionQuestions' : IDL.Vec(IDL.Text),
+    'days' : IDL.Vec(DayData),
+    'week' : IDL.Nat,
+    'quote' : IDL.Text,
+    'mandalaHint' : IDL.Text,
+    'intention' : IDL.Text,
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -76,6 +110,8 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getWeek' : IDL.Func([IDL.Nat], [IDL.Opt(WeekData)], ['query']),
+    'getWeeks' : IDL.Func([], [IDL.Vec(WeekData)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'saveJournalEntry' : IDL.Func(

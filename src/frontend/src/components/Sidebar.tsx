@@ -1,17 +1,23 @@
 import { useState } from "react";
 import type { View } from "../App";
-import { WEEKS } from "../journalData";
+import type { NWeekData } from "../hooks/useJournalContent";
 
 interface Props {
   view: View;
   setView: (v: View) => void;
   completedDays: number[];
+  weeks: NWeekData[];
 }
 
-export default function Sidebar({ view, setView, completedDays }: Props) {
+export default function Sidebar({
+  view,
+  setView,
+  completedDays,
+  weeks,
+}: Props) {
   const [expandedWeek, setExpandedWeek] = useState<number | null>(() => {
     if (view.type === "day") {
-      for (const w of WEEKS) {
+      for (const w of weeks) {
         if (
           w.days.some(
             (d) => d.day === (view as { type: "day"; day: number }).day,
@@ -97,7 +103,7 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
           All weeks are open. Enter wherever you feel called.
         </p>
         <div className="space-y-1">
-          {WEEKS.map((week) => {
+          {weeks.map((week) => {
             const isExpanded = expandedWeek === week.week;
 
             return (

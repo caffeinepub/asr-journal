@@ -12,6 +12,7 @@ import WelcomePage from "./components/WelcomePage";
 import { Toaster } from "./components/ui/sonner";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
+import { useJournalContent } from "./hooks/useJournalContent";
 
 export type View =
   | { type: "day"; day: number }
@@ -30,6 +31,10 @@ export default function App() {
   const [view, setView] = useState<View>({ type: "day", day: 1 });
   const [completedDays, setCompletedDays] = useState<number[]>([]);
   const [showCovenant, setShowCovenant] = useState(false);
+
+  const { weeks, loading: journalLoading } = useJournalContent(
+    isAuthenticated ? actor : null,
+  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -71,15 +76,34 @@ export default function App() {
     return <JourneyCovenantPage onReceive={handleCovenantReceive} />;
   }
 
+  if (journalLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <p
+          className="text-amber-700/70 text-lg italic"
+          data-ocid="app.loading_state"
+        >
+          Taking a quiet breath...
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar view={view} setView={setView} completedDays={completedDays} />
+      <Sidebar
+        view={view}
+        setView={setView}
+        completedDays={completedDays}
+        weeks={weeks}
+      />
       <main className="flex-1 overflow-y-auto">
         {view.type === "week" && (
           <WeeklyOverview
             weekNum={view.week}
             setView={setView}
             completedDays={completedDays}
+            weeks={weeks}
           />
         )}
         {view.type === "day" && (
@@ -87,6 +111,7 @@ export default function App() {
             dayNum={view.day}
             actor={actor}
             onSaved={refreshProgress}
+            weeks={weeks}
           />
         )}
         {view.type === "checkin" && <CheckInPage milestone={view.milestone} />}

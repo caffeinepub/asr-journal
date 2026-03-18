@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { backendInterface } from "../backend.d";
-import { getDayData } from "../journalData";
+import type { NWeekData } from "../hooks/useJournalContent";
+import { getDayDataFromWeeks } from "../hooks/useJournalContent";
 import ArtCanvas from "./ArtCanvas";
 
 interface Props {
   dayNum: number;
   actor: backendInterface | null;
   onSaved?: () => void;
+  weeks: NWeekData[];
 }
 
 const soulReminders = [
@@ -18,8 +20,8 @@ const soulReminders = [
   "Your authentic self is already here.",
 ];
 
-export default function DailyPage({ dayNum, actor, onSaved }: Props) {
-  const data = getDayData(dayNum);
+export default function DailyPage({ dayNum, actor, onSaved, weeks }: Props) {
+  const data = getDayDataFromWeeks(weeks, dayNum);
   const [spiritualResponse, setSpiritualResponse] = useState("");
   const [writingResponse, setWritingResponse] = useState("");
   const [gratitudeAnchor, setGratitudeAnchor] = useState("");

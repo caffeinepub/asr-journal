@@ -11,6 +11,13 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface ArtCanvas { 'base64Data' : string }
+export interface DayData {
+  'art' : string,
+  'day' : bigint,
+  'spiritual' : string,
+  'gratitude' : string,
+  'writing' : string,
+}
 export interface JournalEntry {
   'artCanvas' : ArtCanvas,
   'writingResponse' : string,
@@ -22,6 +29,15 @@ export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface WeekData {
+  'theme' : string,
+  'reflectionQuestions' : Array<string>,
+  'days' : Array<DayData>,
+  'week' : bigint,
+  'quote' : string,
+  'mandalaHint' : string,
+  'intention' : string,
+}
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
@@ -31,6 +47,8 @@ export interface _SERVICE {
   'getJournalEntry' : ActorMethod<[bigint], [] | [JournalEntry]>,
   'getProgress' : ActorMethod<[], Array<bigint>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getWeek' : ActorMethod<[bigint], [] | [WeekData]>,
+  'getWeeks' : ActorMethod<[], Array<WeekData>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'saveJournalEntry' : ActorMethod<

@@ -89,6 +89,13 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface DayData {
+    art: string;
+    day: bigint;
+    spiritual: string;
+    gratitude: string;
+    writing: string;
+}
 export interface ArtCanvas {
     base64Data: string;
 }
@@ -98,6 +105,15 @@ export interface JournalEntry {
     spiritualResponse: string;
     dayNumber: bigint;
     gratitudeAnchor: string;
+}
+export interface WeekData {
+    theme: string;
+    reflectionQuestions: Array<string>;
+    days: Array<DayData>;
+    week: bigint;
+    quote: string;
+    mandalaHint: string;
+    intention: string;
 }
 export interface UserProfile {
     name: string;
@@ -116,11 +132,13 @@ export interface backendInterface {
     getJournalEntry(dayNumber: bigint): Promise<JournalEntry | null>;
     getProgress(): Promise<Array<bigint>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getWeek(weekNumber: bigint): Promise<WeekData | null>;
+    getWeeks(): Promise<Array<WeekData>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveJournalEntry(dayNumber: bigint, spiritualResponse: string, writingResponse: string, gratitudeAnchor: string, artCanvas: ArtCanvas): Promise<void>;
 }
-import type { JournalEntry as _JournalEntry, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { JournalEntry as _JournalEntry, UserProfile as _UserProfile, UserRole as _UserRole, WeekData as _WeekData } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -235,6 +253,34 @@ export class Backend implements backendInterface {
             return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getWeek(arg0: bigint): Promise<WeekData | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getWeek(arg0);
+                return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getWeek(arg0);
+            return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getWeeks(): Promise<Array<WeekData>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getWeeks();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getWeeks();
+            return result;
+        }
+    }
     async isCallerAdmin(): Promise<boolean> {
         if (this.processError) {
             try {
@@ -285,6 +331,9 @@ function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_JournalEntry]): JournalEntry | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_WeekData]): WeekData | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_variant_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
