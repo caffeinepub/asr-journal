@@ -13,15 +13,16 @@ export default function ArchivePage({ setView, completedDays }: Props) {
         <p className="text-xs tracking-widest uppercase text-amber-600 mb-2">
           Your Living Archive
         </p>
-        <h2 className="text-4xl text-amber-900">Return & Revisit</h2>
+        <h2 className="text-4xl text-amber-900 font-light">
+          Return &amp; Revisit
+        </h2>
         <p className="text-base text-foreground/65 mt-3 leading-relaxed italic">
-          This is not a record of completion. It is a living space you may
-          return to, again and again, in any order.
+          Return anytime — all reflections, art, and prompts remain yours.
         </p>
         <div className="w-12 h-px bg-amber-400 mt-4" />
       </div>
 
-      <p className="text-sm italic text-muted-foreground/60 mb-8 leading-relaxed">
+      <p className="text-sm italic text-muted-foreground/55 mb-8 leading-relaxed">
         Your journey is cyclical, not linear. Every return is a new beginning.
       </p>
 
@@ -40,16 +41,11 @@ export default function ArchivePage({ setView, completedDays }: Props) {
               data-ocid={`archive.item.${week.week}`}
               className="text-left bg-card border border-border rounded-2xl p-5 shadow-sm hover:border-amber-300 hover:shadow-md transition-all group"
             >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <span className="text-xs text-muted-foreground/60">
-                  Week {week.week}
+              {hasVisited && (
+                <span className="text-xs italic text-amber-600/70 block mb-1">
+                  visited
                 </span>
-                {hasVisited && (
-                  <span className="text-xs italic text-amber-600/70">
-                    visited
-                  </span>
-                )}
-              </div>
+              )}
               <h3 className="text-base text-amber-800 group-hover:text-amber-900 transition-colors mb-2">
                 {week.theme}
               </h3>
@@ -76,7 +72,7 @@ export default function ArchivePage({ setView, completedDays }: Props) {
       </div>
 
       <div className="mt-12 text-center">
-        <p className="text-sm italic text-muted-foreground/50">
+        <p className="text-sm italic text-muted-foreground/45">
           Each week is its own complete world. You may enter anywhere, anytime.
         </p>
       </div>

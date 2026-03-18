@@ -43,14 +43,17 @@ export default function WeeklyOverview({
   return (
     <div className="max-w-2xl mx-auto px-6 py-10 pb-20">
       <div className="mb-8">
-        <p className="text-xs tracking-widest uppercase text-amber-600 mb-2">
-          Week {week.week} Overview
+        {/* Exact microcopy per spec — no Week X label */}
+        <p className="text-sm italic text-muted-foreground/65 mb-4 leading-relaxed">
+          This week invites you into{" "}
+          <span className="text-amber-700 not-italic">{week.theme}</span>. Move
+          at your own pace, revisit anytime, notice without judgment.
         </p>
-        <h2 className="text-4xl text-amber-900">{week.theme}</h2>
+        <h2 className="text-4xl text-amber-900 font-light">{week.theme}</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Days {firstDay}–{lastDay}
         </p>
-        <p className="text-xs italic text-muted-foreground/60 mt-2">
+        <p className="text-xs italic text-muted-foreground/55 mt-2">
           You may revisit, pause, or skip days. All is welcome.
         </p>
         <div className="w-12 h-px bg-amber-400 mt-3" />
@@ -85,6 +88,9 @@ export default function WeeklyOverview({
         <div className="space-y-4">
           <p className="text-xs uppercase tracking-widest text-amber-600">
             Weekly Reflection Invitations
+          </p>
+          <p className="text-xs italic text-muted-foreground/50">
+            (optional — sit with whatever feels alive)
           </p>
           <ul className="space-y-3">
             {week.reflectionQuestions.map((q) => (
@@ -128,9 +134,11 @@ export default function WeeklyOverview({
             <p className="text-xs uppercase tracking-widest text-sage-text mb-1">
               Closing this Week with Gentleness
             </p>
-            <p className="text-sm italic text-sage-text/70">
-              A few soft invitations as you complete this chapter of your
-              journey
+            <p className="text-sm italic text-sage-text/70 mb-1">
+              Pause. Notice. Integrate. Carry forward what feels meaningful.
+            </p>
+            <p className="text-xs italic text-muted-foreground/45">
+              This practice is cyclical — come back anytime.
             </p>
           </div>
           <div className="space-y-4">

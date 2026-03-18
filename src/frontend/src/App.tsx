@@ -3,6 +3,8 @@ import ArchivePage from "./components/ArchivePage";
 import CheckInPage from "./components/CheckInPage";
 import CommunityWitnessPage from "./components/CommunityWitnessPage";
 import DailyPage from "./components/DailyPage";
+import GuidanceLibraryPage from "./components/GuidanceLibraryPage";
+import IdentityTrackingPage from "./components/IdentityTrackingPage";
 import JourneyCovenantPage from "./components/JourneyCovenantPage";
 import Sidebar from "./components/Sidebar";
 import WeeklyOverview from "./components/WeeklyOverview";
@@ -17,7 +19,9 @@ export type View =
   | { type: "checkin"; milestone: 30 | 60 | 90 }
   | { type: "covenant" }
   | { type: "community" }
-  | { type: "archive" };
+  | { type: "archive" }
+  | { type: "guidance" }
+  | { type: "identity" };
 
 export default function App() {
   const { identity, login } = useInternetIdentity();
@@ -90,6 +94,8 @@ export default function App() {
         {view.type === "archive" && (
           <ArchivePage setView={setView} completedDays={completedDays} />
         )}
+        {view.type === "guidance" && <GuidanceLibraryPage />}
+        {view.type === "identity" && <IdentityTrackingPage />}
       </main>
       <Toaster richColors position="top-right" />
     </div>

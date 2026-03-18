@@ -59,7 +59,9 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
       <div className="px-5 pt-6 pb-4 border-b border-sidebar-border flex items-center justify-between">
         <div>
           <h1 className="text-xl text-amber-900">ASR Journal</h1>
-          <p className="text-xs text-muted-foreground mt-1">90-Day Journey</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            90-Day Soul Reminder Journey
+          </p>
         </div>
         <button
           type="button"
@@ -82,17 +84,11 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
         </button>
       </div>
 
-      {/* Presence tracker (not a progress bar) */}
-      <div className="px-5 py-4 border-b border-sidebar-border">
-        <p className="text-xs text-muted-foreground/70 italic mb-2">
+      {/* Gentle presence note — no progress bar pressure */}
+      <div className="px-5 py-3 border-b border-sidebar-border">
+        <p className="text-xs text-muted-foreground/60 italic">
           {visitedCount} {visitedCount === 1 ? "day" : "days"} visited
         </p>
-        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-amber-400/50 rounded-full transition-all"
-            style={{ width: `${Math.round((visitedCount / 90) * 100)}%` }}
-          />
-        </div>
       </div>
 
       {/* Nav */}
@@ -103,9 +99,6 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
         <div className="space-y-1">
           {WEEKS.map((week) => {
             const isExpanded = expandedWeek === week.week;
-            const weekVisited = week.days.filter((d) =>
-              completedDays.includes(d.day),
-            ).length;
 
             return (
               <div key={week.week}>
@@ -122,31 +115,21 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
                       : "text-foreground/70 hover:bg-muted hover:text-foreground"
                   }`}
                 >
-                  <span className="text-left">
-                    <span className="text-xs text-muted-foreground mr-2">
-                      W{week.week}
-                    </span>
-                    {week.theme}
-                  </span>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs text-muted-foreground/60">
-                      {weekVisited}/7
-                    </span>
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      aria-hidden="true"
-                      className={`transition-transform ${
-                        isExpanded ? "rotate-90" : ""
-                      }`}
-                    >
-                      <path d="M8 4l6 6-6 6" />
-                    </svg>
-                  </div>
+                  <span className="text-left">{week.theme}</span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                    className={`shrink-0 transition-transform ${
+                      isExpanded ? "rotate-90" : ""
+                    }`}
+                  >
+                    <path d="M8 4l6 6-6 6" />
+                  </svg>
                 </button>
 
                 {isExpanded && (
@@ -166,7 +149,7 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
                           }`}
                         >
                           <span
-                            className={`w-3.5 h-3.5 rounded-full border shrink-0 ${
+                            className={`w-3 h-3 rounded-full border shrink-0 ${
                               visited
                                 ? "bg-amber-400/60 border-amber-400"
                                 : "border-muted-foreground/30"
@@ -230,8 +213,20 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
         </div>
       </nav>
 
-      {/* Community & Archive links */}
+      {/* Bottom nav links */}
       <div className="px-3 py-3 border-t border-sidebar-border/50 space-y-1">
+        <button
+          type="button"
+          onClick={() => setView({ type: "guidance" })}
+          data-ocid="sidebar.guidance.link"
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+            view.type === "guidance"
+              ? "bg-amber-100 text-amber-900 font-medium"
+              : "text-foreground/60 hover:bg-muted hover:text-foreground"
+          }`}
+        >
+          <span aria-hidden="true">📖</span>Core Guidance
+        </button>
         <button
           type="button"
           onClick={() => setView({ type: "community" })}
@@ -254,9 +249,25 @@ export default function Sidebar({ view, setView, completedDays }: Props) {
               : "text-foreground/60 hover:bg-muted hover:text-foreground"
           }`}
         >
-          <span aria-hidden="true">🌀</span>
-          Return & Revisit
+          <span aria-hidden="true">🌀</span>Return &amp; Revisit
         </button>
+        <div>
+          <button
+            type="button"
+            onClick={() => setView({ type: "identity" })}
+            data-ocid="sidebar.identity.link"
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+              view.type === "identity"
+                ? "bg-amber-100 text-amber-900 font-medium"
+                : "text-foreground/60 hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            <span aria-hidden="true">🔮</span>Soul Reflection
+          </button>
+          <p className="text-xs italic text-muted-foreground/40 pl-9 -mt-0.5 pb-1">
+            optional
+          </p>
+        </div>
       </div>
     </aside>
   );
