@@ -21,12 +21,29 @@ actor {
     base64Data : Text;
   };
 
+  // Legacy entry type (matches the previously deployed stable var shape)
+  type JournalEntryV1 = {
+    dayNumber : Nat;
+    spiritualResponse : Text;
+    writingResponse : Text;
+    gratitudeAnchor : Text;
+    artCanvas : ArtCanvas;
+  };
+
+  type EmbedLink = {
+    url : Text;
+    title : Text;
+    linkType : Text; // "music", "video", "reference"
+  };
+
   type JournalEntry = {
     dayNumber : Nat;
     spiritualResponse : Text;
     writingResponse : Text;
     gratitudeAnchor : Text;
     artCanvas : ArtCanvas;
+    links : [EmbedLink];
+    photoIds : [Text];
   };
 
   type DayData = {
@@ -52,8 +69,43 @@ actor {
   // Store user profiles
   let userProfiles = Map.empty<Principal, UserProfile>();
 
-  // Store entries per user
-  let userEntries = Map.empty<Principal, Map.Map<Nat, JournalEntry>>();
+  // Legacy stable var — keeps the old type so existing data loads without a compatibility error.
+  // All reads/writes use userEntriesV2 going forward; migration runs in postupgrade.
+  let userEntries = Map.empty<Principal, Map.Map<Nat, JournalEntryV1>>();
+
+  // Current stable storage with the new entry shape
+  let userEntriesV2 = Map.empty<Principal, Map.Map<Nat, JournalEntry>>();
+
+  // Migrate any V1 entries into V2 on upgrade
+  system func postupgrade() {
+    for ((principal, oldMap) in userEntries.entries()) {
+      let newUserMap = switch (userEntriesV2.get(principal)) {
+        case (?m) { m };
+        case (null) {
+          let m = Map.empty<Nat, JournalEntry>();
+          userEntriesV2.add(principal, m);
+          m;
+        };
+      };
+      for ((day, old) in oldMap.entries()) {
+        // Only migrate if V2 doesn't already have this entry
+        switch (newUserMap.get(day)) {
+          case (?_) {}; // already migrated
+          case (null) {
+            newUserMap.add(day, {
+              dayNumber = old.dayNumber;
+              spiritualResponse = old.spiritualResponse;
+              writingResponse = old.writingResponse;
+              gratitudeAnchor = old.gratitudeAnchor;
+              artCanvas = old.artCanvas;
+              links = [];
+              photoIds = [];
+            });
+          };
+        };
+      };
+    };
+  };
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -76,7 +128,15 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  public shared ({ caller }) func saveJournalEntry(dayNumber : Nat, spiritualResponse : Text, writingResponse : Text, gratitudeAnchor : Text, artCanvas : ArtCanvas) : async () {
+  public shared ({ caller }) func saveJournalEntry(
+    dayNumber : Nat,
+    spiritualResponse : Text,
+    writingResponse : Text,
+    gratitudeAnchor : Text,
+    artCanvas : ArtCanvas,
+    links : [EmbedLink],
+    photoIds : [Text],
+  ) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can save entries");
     };
@@ -87,12 +147,14 @@ actor {
       writingResponse;
       gratitudeAnchor;
       artCanvas;
+      links;
+      photoIds;
     };
 
-    let userMap = switch (userEntries.get(caller)) {
+    let userMap = switch (userEntriesV2.get(caller)) {
       case (null) {
         let newMap = Map.empty<Nat, JournalEntry>();
-        userEntries.add(caller, newMap);
+        userEntriesV2.add(caller, newMap);
         newMap;
       };
       case (?existingMap) { existingMap };
@@ -106,7 +168,7 @@ actor {
       Runtime.trap("Unauthorized: Only users can view entries");
     };
 
-    switch (userEntries.get(caller)) {
+    switch (userEntriesV2.get(caller)) {
       case (null) { null };
       case (?entries) { entries.get(dayNumber) };
     };
@@ -117,7 +179,7 @@ actor {
       Runtime.trap("Unauthorized: Only users can view entries");
     };
 
-    switch (userEntries.get(caller)) {
+    switch (userEntriesV2.get(caller)) {
       case (null) { [] };
       case (?entries) { entries.values().toArray() };
     };
@@ -128,7 +190,7 @@ actor {
       Runtime.trap("Unauthorized: Only users can view progress");
     };
 
-    switch (userEntries.get(caller)) {
+    switch (userEntriesV2.get(caller)) {
       case (null) { [] };
       case (?entries) {
         let daysSet = Set.empty<Nat>();

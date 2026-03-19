@@ -7,6 +7,7 @@ interface Props {
   setView: (v: View) => void;
   completedDays: number[];
   weeks: NWeekData[];
+  isOnDayPage?: boolean;
 }
 
 export default function Sidebar({
@@ -14,6 +15,7 @@ export default function Sidebar({
   setView,
   completedDays,
   weeks,
+  isOnDayPage = false,
 }: Props) {
   const [expandedWeek, setExpandedWeek] = useState<number | null>(() => {
     if (view.type === "day") {
@@ -32,11 +34,11 @@ export default function Sidebar({
       return (view as { type: "week-reflection"; week: number }).week;
     return null;
   });
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(isOnDayPage);
 
   if (collapsed) {
     return (
-      <aside className="w-12 bg-sidebar border-r border-sidebar-border flex flex-col items-center py-4">
+      <aside className="w-12 bg-sidebar border-r border-sidebar-border flex flex-col items-center py-4 shrink-0">
         <button
           type="button"
           onClick={() => setCollapsed(false)}
@@ -69,8 +71,7 @@ export default function Sidebar({
     }`;
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-full overflow-hidden">
-      {/* Header */}
+    <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-full overflow-hidden shrink-0">
       <div className="px-5 pt-5 pb-4 border-b border-sidebar-border flex items-start justify-between">
         <div>
           <h1 className="font-display text-lg text-amber-900 leading-tight">
@@ -102,7 +103,6 @@ export default function Sidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3 flex flex-col">
-        {/* Top: Welcome + Three Threads */}
         <div className="space-y-0.5 mb-1">
           <button
             type="button"
@@ -151,7 +151,6 @@ export default function Sidebar({
 
         <div className="h-px bg-amber-200/40 my-2 mx-1" aria-hidden="true" />
 
-        {/* Weeks */}
         <div className="space-y-0.5 flex-1">
           {weeks.map((week) => {
             const isExpanded = expandedWeek === week.week;
@@ -311,13 +310,12 @@ export default function Sidebar({
 
         <div className="h-px bg-amber-200/40 my-2 mx-1" aria-hidden="true" />
 
-        {/* Bottom: Closing */}
         <div className="space-y-0.5 mb-1">
           <button
             type="button"
-            onClick={() => setView({ type: "closing" })}
-            data-ocid="sidebar.closing.link"
-            className={navBtn(view.type === "closing")}
+            onClick={() => setView({ type: "archive" })}
+            data-ocid="sidebar.archive.link"
+            className={navBtn(view.type === "archive")}
           >
             <svg
               width="14"
@@ -329,11 +327,38 @@ export default function Sidebar({
               aria-hidden="true"
               className="shrink-0 opacity-70"
             >
-              <path d="M12 21C12 21 3 14 3 8a9 9 0 0 1 18 0c0 6-9 13-9 13z" />
-              <path d="M9 12l2 2 4-4" />
+              <rect x="2" y="4" width="20" height="5" rx="1" />
+              <path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9" />
+              <path d="M10 13h4" />
             </svg>
-            Closing &amp; Integration
+            Archive
           </button>
+        </div>
+
+        <div className="h-px bg-amber-200/40 my-2 mx-1" aria-hidden="true" />
+
+        <div className="px-3 pb-2">
+          <a
+            href="https://www.skool.com/aderemus-collective-9404/classroom/"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-ocid="sidebar.back_to_class.link"
+            className="flex items-center gap-2 text-xs text-amber-700/55 hover:text-amber-800/80 transition-colors py-1.5"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <path d="M12 4l-6 6 6 6" />
+            </svg>
+            Back to Class
+          </a>
         </div>
       </nav>
     </aside>

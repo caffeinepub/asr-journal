@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { backendInterface } from "../backend.d";
+import type { backendInterface } from "../backend";
 import { WEEKS } from "../journalData";
 
 export interface NDayData {

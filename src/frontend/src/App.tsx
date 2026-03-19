@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import ArchivePage from "./components/ArchivePage";
 import CheckInPage from "./components/CheckInPage";
-import ClosingPage from "./components/ClosingPage";
 import DailyPage from "./components/DailyPage";
 import JourneyCovenantPage from "./components/JourneyCovenantPage";
 import Sidebar from "./components/Sidebar";
@@ -16,7 +16,7 @@ import { useJournalContent } from "./hooks/useJournalContent";
 export type View =
   | { type: "threshold" }
   | { type: "covenant" }
-  | { type: "closing" }
+  | { type: "archive" }
   | { type: "day"; day: number }
   | { type: "week"; week: number }
   | { type: "week-reflection"; week: number }
@@ -51,6 +51,10 @@ export default function App() {
     }
   };
 
+  const navigateDay = (day: number) => {
+    setView({ type: "day", day });
+  };
+
   if (!isAuthenticated) {
     return <WelcomePage onLogin={login} />;
   }
@@ -68,6 +72,8 @@ export default function App() {
     );
   }
 
+  const isOnDayPage = view.type === "day";
+
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar
@@ -75,11 +81,17 @@ export default function App() {
         setView={setView}
         completedDays={completedDays}
         weeks={weeks}
+        isOnDayPage={isOnDayPage}
       />
       <main className="flex-1 overflow-y-auto">
         {view.type === "threshold" && <ThresholdPage />}
         {view.type === "covenant" && <JourneyCovenantPage />}
-        {view.type === "closing" && <ClosingPage />}
+        {view.type === "archive" && (
+          <ArchivePage
+            actor={actor}
+            onNavigateDay={(day) => setView({ type: "day", day })}
+          />
+        )}
         {view.type === "week" && (
           <WeeklyOverview
             weekNum={view.week}
@@ -100,6 +112,7 @@ export default function App() {
             dayNum={view.day}
             actor={actor}
             onSaved={refreshProgress}
+            onNavigateDay={navigateDay}
             weeks={weeks}
           />
         )}
