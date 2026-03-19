@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { View } from "../App";
 import type { NWeekData } from "../hooks/useJournalContent";
 import ArtCanvas from "./ArtCanvas";
+import PageFooter from "./PageFooter";
 
 interface Props {
   weekNum: number;
@@ -39,7 +40,7 @@ export default function WeekReflectionPage({ weekNum, weeks, setView }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-6 py-16">
+      <div className="max-w-2xl mx-auto px-6 py-16 pb-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -171,17 +172,19 @@ export default function WeekReflectionPage({ weekNum, weeks, setView }: Props) {
           {weekNum === 13 && (
             <button
               type="button"
-              onClick={() => setView({ type: "aftercare" })}
+              onClick={() => setView({ type: "week", week: 13 })}
               data-ocid="week_reflection.secondary_button"
               className="inline-block border border-amber-400/60 text-amber-800 hover:bg-amber-50 px-8 py-3 rounded-full text-sm transition-colors"
             >
-              Integration &amp; Aftercare
+              Return to Week 13
             </button>
           )}
           <p className="text-xs text-foreground/35 italic">
             Return anytime — all reflections remain yours.
           </p>
         </motion.div>
+
+        <PageFooter />
       </div>
     </div>
   );

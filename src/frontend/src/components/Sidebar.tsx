@@ -36,7 +36,7 @@ export default function Sidebar({
 
   if (collapsed) {
     return (
-      <aside className="w-12 bg-sidebar border-r border-sidebar-border flex flex-col items-center py-4 gap-4">
+      <aside className="w-12 bg-sidebar border-r border-sidebar-border flex flex-col items-center py-4">
         <button
           type="button"
           onClick={() => setCollapsed(false)}
@@ -61,26 +61,35 @@ export default function Sidebar({
     );
   }
 
+  const navBtn = (active: boolean) =>
+    `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+      active
+        ? "bg-amber-100/80 text-amber-900 font-medium"
+        : "text-foreground/65 hover:bg-muted hover:text-foreground"
+    }`;
+
   return (
-    <aside className="w-72 bg-sidebar border-r border-sidebar-border flex flex-col h-full overflow-hidden">
+    <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="px-5 pt-6 pb-4 border-b border-sidebar-border flex items-center justify-between">
+      <div className="px-5 pt-5 pb-4 border-b border-sidebar-border flex items-start justify-between">
         <div>
-          <h1 className="text-xl text-amber-900">ASR Journal</h1>
-          <p className="text-xs text-muted-foreground mt-1">
+          <h1 className="font-display text-lg text-amber-900 leading-tight">
+            ASR Journal
+          </h1>
+          <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
             90-Day Soul Reminder Journey
           </p>
         </div>
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground mt-0.5 shrink-0"
           aria-label="Collapse sidebar"
           data-ocid="sidebar.toggle"
         >
           <svg
-            width="18"
-            height="18"
+            width="16"
+            height="16"
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"
@@ -92,52 +101,58 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* Gentle presence note */}
-      <div className="px-5 py-2.5 border-b border-sidebar-border">
-        <p className="text-xs text-muted-foreground/50 italic">
-          Your journey is your own.
-        </p>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-3 py-3">
-        {/* Top links: Threshold + Covenant */}
-        <div className="space-y-0.5 mb-3">
+      <nav className="flex-1 overflow-y-auto px-2 py-3 flex flex-col">
+        {/* Top: Welcome + Three Threads */}
+        <div className="space-y-0.5 mb-1">
           <button
             type="button"
             onClick={() => setView({ type: "threshold" })}
             data-ocid="sidebar.threshold.link"
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-              view.type === "threshold"
-                ? "bg-amber-100 text-amber-900 font-semibold"
-                : "text-foreground/70 hover:bg-muted hover:text-foreground"
-            }`}
+            className={navBtn(view.type === "threshold")}
           >
-            <span aria-hidden="true">🌿</span>
-            Threshold Space
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              aria-hidden="true"
+              className="shrink-0 opacity-70"
+            >
+              <path d="M12 22s-8-6-8-12a8 8 0 0 1 16 0c0 6-8 12-8 12z" />
+              <circle cx="12" cy="10" r="2" />
+            </svg>
+            Welcome
           </button>
           <button
             type="button"
             onClick={() => setView({ type: "covenant" })}
             data-ocid="sidebar.covenant.link"
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-              view.type === "covenant"
-                ? "bg-amber-100 text-amber-900 font-semibold"
-                : "text-foreground/70 hover:bg-muted hover:text-foreground"
-            }`}
+            className={navBtn(view.type === "covenant")}
           >
-            <span aria-hidden="true">📜</span>
-            Journey Covenant
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              aria-hidden="true"
+              className="shrink-0 opacity-70"
+            >
+              <path d="M4 12c2-4 6-6 8-6s6 2 8 6" />
+              <path d="M4 12c2 4 6 6 8 6s6-2 8-6" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+            </svg>
+            The Three Threads
           </button>
         </div>
 
-        {/* Weekly Themes label */}
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 font-medium px-2 pb-2 pt-1">
-          Weekly Themes
-        </p>
+        <div className="h-px bg-amber-200/40 my-2 mx-1" aria-hidden="true" />
 
-        {/* Weekly tree */}
-        <div className="space-y-0.5">
+        {/* Weeks */}
+        <div className="space-y-0.5 flex-1">
           {weeks.map((week) => {
             const isExpanded = expandedWeek === week.week;
             const isWeekActive =
@@ -155,14 +170,14 @@ export default function Sidebar({
                   data-ocid={`sidebar.item.${week.week}`}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                     isWeekActive
-                      ? "bg-amber-100 text-amber-900 font-semibold"
-                      : "text-foreground/70 hover:bg-muted hover:text-foreground"
+                      ? "bg-amber-100/80 text-amber-900 font-medium"
+                      : "text-foreground/65 hover:bg-muted hover:text-foreground"
                   }`}
                 >
-                  <span className="text-left truncate">{week.theme}</span>
+                  <span className="text-left truncate pr-1">{week.theme}</span>
                   <svg
-                    width="14"
-                    height="14"
+                    width="12"
+                    height="12"
                     viewBox="0 0 20 20"
                     fill="none"
                     stroke="currentColor"
@@ -175,8 +190,7 @@ export default function Sidebar({
                 </button>
 
                 {isExpanded && (
-                  <div className="ml-3 mt-0.5 space-y-0.5">
-                    {/* Day buttons */}
+                  <div className="ml-2 mt-0.5 space-y-0.5 border-l border-amber-200/60 pl-2">
                     {week.days.map((d) => {
                       const visited = completedDays.includes(d.day);
                       const active =
@@ -187,17 +201,17 @@ export default function Sidebar({
                           key={d.day}
                           type="button"
                           onClick={() => setView({ type: "day", day: d.day })}
-                          className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${
+                          className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors ${
                             active
-                              ? "bg-amber-200 text-amber-900 font-medium"
-                              : "text-foreground/60 hover:bg-muted hover:text-foreground"
+                              ? "bg-amber-200/70 text-amber-900 font-medium"
+                              : "text-foreground/55 hover:bg-muted hover:text-foreground"
                           }`}
                         >
                           <span
-                            className={`w-2.5 h-2.5 rounded-full border shrink-0 ${
+                            className={`w-2 h-2 rounded-full border shrink-0 ${
                               visited
-                                ? "bg-amber-400/60 border-amber-400"
-                                : "border-muted-foreground/30"
+                                ? "bg-amber-400/70 border-amber-400"
+                                : "border-muted-foreground/25"
                             }`}
                           />
                           Day {d.day}
@@ -205,26 +219,26 @@ export default function Sidebar({
                       );
                     })}
 
-                    {/* Week Reflection link */}
                     <button
                       type="button"
                       onClick={() =>
                         setView({ type: "week-reflection", week: week.week })
                       }
                       data-ocid="sidebar.week_reflection.link"
-                      className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors mt-1 ${
+                      className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors mt-0.5 ${
                         view.type === "week-reflection" &&
                         (view as { type: "week-reflection"; week: number })
                           .week === week.week
-                          ? "bg-purple-100 text-purple-900 font-medium"
-                          : "text-purple-700/65 hover:bg-purple-50 hover:text-purple-900"
+                          ? "bg-purple-100/70 text-purple-900 font-medium"
+                          : "text-purple-700/55 hover:bg-purple-50 hover:text-purple-900"
                       }`}
                     >
-                      <span aria-hidden="true">✦</span>
+                      <span className="text-[10px]" aria-hidden="true">
+                        ✦
+                      </span>
                       Week Reflection
                     </button>
 
-                    {/* Milestone check-ins */}
                     {week.week === 5 && (
                       <button
                         type="button"
@@ -232,15 +246,17 @@ export default function Sidebar({
                           setView({ type: "checkin", milestone: 30 })
                         }
                         data-ocid="sidebar.checkin_30.link"
-                        className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors mt-0.5 ${
+                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors ${
                           view.type === "checkin" &&
                           (view as { type: "checkin"; milestone: number })
                             .milestone === 30
-                            ? "bg-purple-100 text-purple-900 font-medium"
-                            : "text-purple-700/50 hover:bg-purple-50 hover:text-purple-900"
+                            ? "bg-purple-100/70 text-purple-900 font-medium"
+                            : "text-purple-600/45 hover:bg-purple-50 hover:text-purple-900"
                         }`}
                       >
-                        <span aria-hidden="true">🌙</span>
+                        <span className="text-[10px]" aria-hidden="true">
+                          🌙
+                        </span>
                         30-Day Reflection
                       </button>
                     )}
@@ -251,15 +267,17 @@ export default function Sidebar({
                           setView({ type: "checkin", milestone: 60 })
                         }
                         data-ocid="sidebar.checkin_60.link"
-                        className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors mt-0.5 ${
+                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors ${
                           view.type === "checkin" &&
                           (view as { type: "checkin"; milestone: number })
                             .milestone === 60
-                            ? "bg-purple-100 text-purple-900 font-medium"
-                            : "text-purple-700/50 hover:bg-purple-50 hover:text-purple-900"
+                            ? "bg-purple-100/70 text-purple-900 font-medium"
+                            : "text-purple-600/45 hover:bg-purple-50 hover:text-purple-900"
                         }`}
                       >
-                        <span aria-hidden="true">🌙</span>
+                        <span className="text-[10px]" aria-hidden="true">
+                          🌙
+                        </span>
                         60-Day Reflection
                       </button>
                     )}
@@ -270,15 +288,17 @@ export default function Sidebar({
                           setView({ type: "checkin", milestone: 90 })
                         }
                         data-ocid="sidebar.checkin_90.link"
-                        className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors mt-0.5 ${
+                        className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors ${
                           view.type === "checkin" &&
                           (view as { type: "checkin"; milestone: number })
                             .milestone === 90
-                            ? "bg-purple-100 text-purple-900 font-medium"
-                            : "text-purple-700/50 hover:bg-purple-50 hover:text-purple-900"
+                            ? "bg-purple-100/70 text-purple-900 font-medium"
+                            : "text-purple-600/45 hover:bg-purple-50 hover:text-purple-900"
                         }`}
                       >
-                        <span aria-hidden="true">🌙</span>
+                        <span className="text-[10px]" aria-hidden="true">
+                          🌙
+                        </span>
                         90-Day Reflection
                       </button>
                     )}
@@ -288,85 +308,34 @@ export default function Sidebar({
             );
           })}
         </div>
+
+        <div className="h-px bg-amber-200/40 my-2 mx-1" aria-hidden="true" />
+
+        {/* Bottom: Closing */}
+        <div className="space-y-0.5 mb-1">
+          <button
+            type="button"
+            onClick={() => setView({ type: "closing" })}
+            data-ocid="sidebar.closing.link"
+            className={navBtn(view.type === "closing")}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              aria-hidden="true"
+              className="shrink-0 opacity-70"
+            >
+              <path d="M12 21C12 21 3 14 3 8a9 9 0 0 1 18 0c0 6-9 13-9 13z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+            Closing &amp; Integration
+          </button>
+        </div>
       </nav>
-
-      {/* Bottom nav links */}
-      <div className="px-3 py-3 border-t border-sidebar-border/50 space-y-0.5">
-        <button
-          type="button"
-          onClick={() => setView({ type: "guidance" })}
-          data-ocid="sidebar.guidance.link"
-          className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-            view.type === "guidance"
-              ? "bg-amber-100 text-amber-900 font-medium"
-              : "text-foreground/60 hover:bg-muted hover:text-foreground"
-          }`}
-        >
-          <span aria-hidden="true">📖</span>Core Guidance Library
-        </button>
-
-        <div>
-          <button
-            type="button"
-            onClick={() => setView({ type: "identity" })}
-            data-ocid="sidebar.identity.link"
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-              view.type === "identity"
-                ? "bg-amber-100 text-amber-900 font-medium"
-                : "text-foreground/60 hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            <span aria-hidden="true">🔮</span>Identity Tracking
-          </button>
-          <p className="text-xs italic text-muted-foreground/40 pl-9 -mt-0.5 pb-0.5">
-            optional
-          </p>
-        </div>
-
-        <div>
-          <button
-            type="button"
-            onClick={() => setView({ type: "community" })}
-            data-ocid="sidebar.community.link"
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-              view.type === "community"
-                ? "bg-amber-100 text-amber-900 font-medium"
-                : "text-foreground/60 hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            <span aria-hidden="true">🕊️</span>Community Witness
-          </button>
-          <p className="text-xs italic text-muted-foreground/40 pl-9 -mt-0.5 pb-0.5">
-            optional
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setView({ type: "aftercare" })}
-          data-ocid="sidebar.aftercare.link"
-          className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-            view.type === "aftercare"
-              ? "bg-amber-100 text-amber-900 font-medium"
-              : "text-foreground/60 hover:bg-muted hover:text-foreground"
-          }`}
-        >
-          <span aria-hidden="true">🌱</span>Integration &amp; Aftercare
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setView({ type: "archive" })}
-          data-ocid="sidebar.archive.link"
-          className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-            view.type === "archive"
-              ? "bg-amber-100 text-amber-900 font-medium"
-              : "text-foreground/60 hover:bg-muted hover:text-foreground"
-          }`}
-        >
-          <span aria-hidden="true">🌀</span>Archive &amp; Return
-        </button>
-      </div>
     </aside>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PageFooter from "./PageFooter";
 
 interface Props {
   milestone: 30 | 60 | 90;
@@ -82,7 +83,7 @@ export default function CheckInPage({ milestone }: Props) {
       title: "30-Day Reflection",
       theme: "Awareness of Change",
       opening:
-        "Take a breath. You've moved through 30 days of inner work. This is a moment to notice what's shifting — gently, honestly, without pressure.",
+        "Take a breath. You’ve moved through 30 days of inner work. This is a moment to notice what’s shifting — gently, honestly, without pressure.",
       affirmation: {
         suggested: "I am growing gently, intentionally, and in my own rhythm.",
         label: "30-day",
@@ -92,7 +93,7 @@ export default function CheckInPage({ milestone }: Props) {
       title: "60-Day Reflection",
       theme: "Deepening the Practice",
       opening:
-        "You've moved through the halfway point. Your consistency is creating real internal shifts. Honor the depth of your journey.",
+        "You’ve moved through the halfway point. Your consistency is creating real internal shifts. Honor the depth of your journey.",
       affirmation: {
         suggested: "I listen to my growth and honor its pace.",
         label: "days 61–90",
@@ -114,7 +115,7 @@ export default function CheckInPage({ milestone }: Props) {
   const cfg = configs[milestone];
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10 pb-20">
+    <div className="max-w-2xl mx-auto px-6 py-10 pb-8">
       <div className="mb-8">
         <p className="text-xs tracking-widest uppercase text-purple-600 mb-2">
           Milestone Reflection
@@ -237,7 +238,7 @@ export default function CheckInPage({ milestone }: Props) {
               <p className="text-sm text-muted-foreground">
                 What changed in your mind, body, spirit, or habits?
               </p>
-              <SoftAreas count={5} placeholder="A shift I've noticed..." />
+              <SoftAreas count={5} placeholder="A shift I’ve noticed..." />
             </Section>
             <Section title="Identity noticing">
               <JournalArea
@@ -245,7 +246,7 @@ export default function CheckInPage({ milestone }: Props) {
                 minHeight="140px"
               />
             </Section>
-            <Section title="The practices you're keeping">
+            <Section title="The practices you’re keeping">
               <JournalArea
                 placeholder="List the creative, spiritual, or writing habits you want to continue beyond this journal."
                 minHeight="120px"
@@ -282,6 +283,8 @@ export default function CheckInPage({ milestone }: Props) {
           </>
         )}
       </div>
+
+      <PageFooter />
     </div>
   );
 }

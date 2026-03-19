@@ -12,6 +12,25 @@ export default function ArtCanvas({ initialData, onChange }: Props) {
   const [color, setColor] = useState("#7c5c3e");
   const [brushSize, setBrushSize] = useState(4);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
+  const historyRef = useRef<ImageData[]>([]);
+  const historyIndexRef = useRef(-1);
+
+  const saveSnapshot = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    // Truncate any redo history
+    historyRef.current = historyRef.current.slice(
+      0,
+      historyIndexRef.current + 1,
+    );
+    historyRef.current.push(snapshot);
+    // Keep at most 40 states
+    if (historyRef.current.length > 40) historyRef.current.shift();
+    historyIndexRef.current = historyRef.current.length - 1;
+  };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally run once on mount
   useEffect(() => {
@@ -25,8 +44,13 @@ export default function ArtCanvas({ initialData, onChange }: Props) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (initialData) {
       const img = new Image();
-      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+        saveSnapshot();
+      };
       img.src = initialData;
+    } else {
+      saveSnapshot();
     }
   }, []);
 
@@ -52,6 +76,7 @@ export default function ArtCanvas({ initialData, onChange }: Props) {
   const startDraw = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    saveSnapshot();
     setIsDrawing(true);
     lastPos.current = getPos(e, canvas);
   };
@@ -83,6 +108,28 @@ export default function ArtCanvas({ initialData, onChange }: Props) {
     }
   };
 
+  const undo = () => {
+    if (historyIndexRef.current <= 0) return;
+    historyIndexRef.current -= 1;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.putImageData(historyRef.current[historyIndexRef.current], 0, 0);
+    if (onChange) onChange(canvas.toDataURL("image/png"));
+  };
+
+  const redo = () => {
+    if (historyIndexRef.current >= historyRef.current.length - 1) return;
+    historyIndexRef.current += 1;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.putImageData(historyRef.current[historyIndexRef.current], 0, 0);
+    if (onChange) onChange(canvas.toDataURL("image/png"));
+  };
+
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -90,7 +137,17 @@ export default function ArtCanvas({ initialData, onChange }: Props) {
     if (!ctx) return;
     ctx.fillStyle = "#FFFAF4";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    saveSnapshot();
     if (onChange) onChange(canvas.toDataURL("image/png"));
+  };
+
+  const exportCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = "asr-journal-art.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
   };
 
   const COLORS = [
@@ -143,13 +200,39 @@ export default function ArtCanvas({ initialData, onChange }: Props) {
           />
           <span className="text-xs text-muted-foreground">{brushSize}px</span>
         </div>
-        <button
-          type="button"
-          onClick={clearCanvas}
-          className="ml-auto text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-3 py-1 transition-colors"
-        >
-          Clear
-        </button>
+        <div className="ml-auto flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={undo}
+            title="Undo"
+            className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2.5 py-1 transition-colors"
+          >
+            ↩ Undo
+          </button>
+          <button
+            type="button"
+            onClick={redo}
+            title="Redo"
+            className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2.5 py-1 transition-colors"
+          >
+            ↪ Redo
+          </button>
+          <button
+            type="button"
+            onClick={clearCanvas}
+            className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2.5 py-1 transition-colors"
+          >
+            Clear
+          </button>
+          <button
+            type="button"
+            onClick={exportCanvas}
+            title="Save image to your device"
+            className="text-xs text-amber-700 hover:text-amber-900 border border-amber-300/60 rounded-md px-2.5 py-1 transition-colors"
+          >
+            ↓ Save
+          </button>
+        </div>
       </div>
 
       <div className="rounded-xl overflow-hidden border-2 border-amber-200 shadow-inner bg-[#FFFAF4]">

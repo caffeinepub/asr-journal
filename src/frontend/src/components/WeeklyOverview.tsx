@@ -1,7 +1,7 @@
-import { useState } from "react";
 import type { View } from "../App";
 import type { NWeekData } from "../hooks/useJournalContent";
 import ArtCanvas from "./ArtCanvas";
+import PageFooter from "./PageFooter";
 
 interface Props {
   weekNum: number;
@@ -10,23 +10,15 @@ interface Props {
   weeks: NWeekData[];
 }
 
-const integrationPrompts = [
-  {
-    id: "carry-forward",
-    label:
-      "What are you carrying forward from this week — not as a task, but as a gift to yourself?",
-  },
-  {
-    id: "release",
-    label:
-      "Is there anything from this week you'd like to release, bless, and let go?",
-  },
-  {
-    id: "care-act",
-    label:
-      "One small act of care you can offer yourself as you close this week.",
-  },
-];
+type DayMark = "favorite" | "surprising" | null;
+const BOOKMARKS_KEY = "asr_day_bookmarks";
+function getBookmarks(): Record<number, DayMark> {
+  try {
+    return JSON.parse(localStorage.getItem(BOOKMARKS_KEY) ?? "{}");
+  } catch {
+    return {};
+  }
+}
 
 export default function WeeklyOverview({
   weekNum,
@@ -35,7 +27,7 @@ export default function WeeklyOverview({
   weeks,
 }: Props) {
   const week = weeks.find((w) => w.week === weekNum);
-  const [integration, setIntegration] = useState<Record<string, string>>({});
+  const bookmarks = getBookmarks();
 
   if (!week) return null;
 
@@ -43,9 +35,8 @@ export default function WeeklyOverview({
   const lastDay = week.days[week.days.length - 1].day;
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10 pb-20">
+    <div className="max-w-2xl mx-auto px-6 py-10 pb-8">
       <div className="mb-8">
-        {/* Exact microcopy per spec — no Week X label */}
         <p className="text-sm italic text-muted-foreground/65 mb-4 leading-relaxed">
           This week invites you into{" "}
           <span className="text-amber-700 not-italic">{week.theme}</span>. Move
@@ -89,39 +80,35 @@ export default function WeeklyOverview({
 
         <div className="space-y-4">
           <p className="text-xs uppercase tracking-widest text-amber-600">
-            Weekly Reflection Invitations
-          </p>
-          <p className="text-xs italic text-muted-foreground/50">
-            (optional — sit with whatever feels alive)
-          </p>
-          <ul className="space-y-3">
-            {week.reflectionQuestions.map((q) => (
-              <li key={q} className="flex gap-3">
-                <span className="text-amber-400 mt-1 shrink-0">✦</span>
-                <p className="text-foreground/80 leading-relaxed pt-0.5">{q}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="space-y-3">
-          <p className="text-xs uppercase tracking-widest text-amber-600">
             Days This Week
           </p>
           <div className="grid grid-cols-7 gap-2">
             {week.days.map((d) => {
               const visited = completedDays.includes(d.day);
+              const mark = bookmarks[d.day];
               return (
                 <button
                   key={d.day}
                   type="button"
                   onClick={() => setView({ type: "day", day: d.day })}
-                  className={`aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-medium transition-colors border ${
+                  title={
+                    mark === "favorite"
+                      ? "♥ Favorite"
+                      : mark === "surprising"
+                        ? "✨ Surprising"
+                        : undefined
+                  }
+                  className={`aspect-square rounded-xl flex flex-col items-center justify-center text-sm font-medium transition-colors border relative ${
                     visited
                       ? "bg-amber-100 border-amber-300 text-amber-800"
                       : "bg-card border-border text-foreground/70 hover:border-amber-400 hover:text-amber-900"
                   }`}
                 >
+                  {mark && (
+                    <span className="absolute top-1 right-1 text-[8px] leading-none">
+                      {mark === "favorite" ? "♥" : "✨"}
+                    </span>
+                  )}
                   <span className="text-xs opacity-60">Day</span>
                   <span>{d.day}</span>
                 </button>
@@ -129,47 +116,9 @@ export default function WeeklyOverview({
             })}
           </div>
         </div>
-
-        {/* Integration & Aftercare */}
-        <div className="rounded-2xl bg-sage-tint border border-sage-border p-6 space-y-5">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-sage-text mb-1">
-              Closing this Week with Gentleness
-            </p>
-            <p className="text-sm italic text-sage-text/70 mb-1">
-              Pause. Notice. Integrate. Carry forward what feels meaningful.
-            </p>
-            <p className="text-xs italic text-muted-foreground/45">
-              This practice is cyclical — come back anytime.
-            </p>
-          </div>
-          <div className="space-y-4">
-            {integrationPrompts.map((prompt, i) => (
-              <div key={prompt.id} className="space-y-2">
-                <label
-                  htmlFor={`integration-${prompt.id}`}
-                  className="text-sm text-sage-text/80 leading-relaxed block"
-                >
-                  {prompt.label}
-                </label>
-                <textarea
-                  id={`integration-${prompt.id}`}
-                  value={integration[prompt.id] ?? ""}
-                  onChange={(e) => {
-                    setIntegration((prev) => ({
-                      ...prev,
-                      [prompt.id]: e.target.value,
-                    }));
-                  }}
-                  placeholder="Take your time..."
-                  data-ocid={`weekly.integration.textarea.${i + 1}`}
-                  className="w-full min-h-[90px] p-3 rounded-xl border border-sage-border bg-white/60 text-foreground placeholder:text-muted-foreground/50 resize-y focus:outline-none focus:ring-2 focus:ring-sage-ring text-sm leading-relaxed"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
+
+      <PageFooter />
     </div>
   );
 }

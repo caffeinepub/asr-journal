@@ -4,6 +4,7 @@ import type { backendInterface } from "../backend.d";
 import type { NWeekData } from "../hooks/useJournalContent";
 import { getDayDataFromWeeks } from "../hooks/useJournalContent";
 import ArtCanvas from "./ArtCanvas";
+import PageFooter from "./PageFooter";
 
 interface Props {
   dayNum: number;
@@ -20,6 +21,28 @@ const soulReminders = [
   "Your authentic self is already here.",
 ];
 
+type DayMark = "favorite" | "surprising" | null;
+
+const BOOKMARKS_KEY = "asr_day_bookmarks";
+
+function getBookmarks(): Record<number, DayMark> {
+  try {
+    return JSON.parse(localStorage.getItem(BOOKMARKS_KEY) ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+function setBookmark(day: number, mark: DayMark) {
+  const all = getBookmarks();
+  if (mark === null) {
+    delete all[day];
+  } else {
+    all[day] = mark;
+  }
+  localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(all));
+}
+
 export default function DailyPage({ dayNum, actor, onSaved, weeks }: Props) {
   const data = getDayDataFromWeeks(weeks, dayNum);
   const [spiritualResponse, setSpiritualResponse] = useState("");
@@ -28,6 +51,9 @@ export default function DailyPage({ dayNum, actor, onSaved, weeks }: Props) {
   const [artData, setArtData] = useState("");
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [currentMark, setCurrentMark] = useState<DayMark>(
+    () => getBookmarks()[dayNum] ?? null,
+  );
 
   const soulReminder = soulReminders[dayNum % soulReminders.length];
 
@@ -37,6 +63,7 @@ export default function DailyPage({ dayNum, actor, onSaved, weeks }: Props) {
     setGratitudeAnchor("");
     setArtData("");
     setLoaded(false);
+    setCurrentMark(getBookmarks()[dayNum] ?? null);
     if (actor) {
       actor
         .getJournalEntry(BigInt(dayNum))
@@ -77,13 +104,22 @@ export default function DailyPage({ dayNum, actor, onSaved, weeks }: Props) {
     }
   };
 
+  const toggleMark = (mark: DayMark) => {
+    const next = currentMark === mark ? null : mark;
+    setCurrentMark(next);
+    setBookmark(dayNum, next);
+    if (next === "favorite") toast.success("♥ Marked as a favorite day");
+    else if (next === "surprising")
+      toast.success("✨ Marked as most surprising");
+  };
+
   if (!data)
     return <div className="p-10 text-muted-foreground">Day not found.</div>;
 
   const { week, day } = data;
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10 pb-20">
+    <div className="max-w-2xl mx-auto px-6 py-10 pb-8">
       {/* Soul reminder band */}
       <div className="mb-6 -mx-2 px-4 py-3 rounded-xl bg-amber-50/70 border border-amber-200/60">
         <p className="text-sm italic text-amber-700/80 text-center">
@@ -91,12 +127,49 @@ export default function DailyPage({ dayNum, actor, onSaved, weeks }: Props) {
         </p>
       </div>
 
-      <div className="mb-8">
-        <p className="text-xs tracking-widest uppercase text-amber-600 mb-2">
-          Week {week.week} — {week.theme}
-        </p>
-        <h2 className="text-4xl text-amber-900">Day {day.day}</h2>
-        <div className="w-12 h-px bg-amber-400 mt-3" />
+      <div className="mb-8 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs tracking-widest uppercase text-amber-600 mb-2">
+            Week {week.week} — {week.theme}
+          </p>
+          <h2 className="text-4xl text-amber-900">Day {day.day}</h2>
+          <div className="w-12 h-px bg-amber-400 mt-3" />
+        </div>
+        {/* Bookmark controls */}
+        <div className="flex gap-2 mt-1 shrink-0">
+          <button
+            type="button"
+            onClick={() => toggleMark("favorite")}
+            title={
+              currentMark === "favorite"
+                ? "Remove favorite"
+                : "Mark as favorite"
+            }
+            className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border transition-colors ${
+              currentMark === "favorite"
+                ? "bg-amber-100 border-amber-400 text-amber-800"
+                : "border-border text-muted-foreground hover:border-amber-300 hover:text-amber-700"
+            }`}
+          >
+            ♥ Favorite
+          </button>
+          <button
+            type="button"
+            onClick={() => toggleMark("surprising")}
+            title={
+              currentMark === "surprising"
+                ? "Remove mark"
+                : "Mark as most surprising"
+            }
+            className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border transition-colors ${
+              currentMark === "surprising"
+                ? "bg-purple-100 border-purple-400 text-purple-800"
+                : "border-border text-muted-foreground hover:border-purple-300 hover:text-purple-700"
+            }`}
+          >
+            ✨ Surprising
+          </button>
+        </div>
       </div>
 
       <div className="space-y-10">
@@ -210,6 +283,8 @@ export default function DailyPage({ dayNum, actor, onSaved, weeks }: Props) {
           </button>
         </div>
       </div>
+
+      <PageFooter />
     </div>
   );
 }
